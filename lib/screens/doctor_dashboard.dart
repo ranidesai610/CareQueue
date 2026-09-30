@@ -222,10 +222,6 @@ color: Colors.grey,
 );
 }
 
-// --------------------------------------------------
-// DOCTOR DATA
-// --------------------------------------------------
-
 final String doctorName =
 doctor['name'] ?? 'Doctor';
 
@@ -294,9 +290,6 @@ data['tokenNumber'],
 'patientId':
 data['patientId'] ?? '',
 
-// IMPORTANT:
-// Patient name is now stored directly
-// inside queue_tokens.
 'patientName':
 data['patientName'] ??
 'Patient',
@@ -347,6 +340,14 @@ patient['status'] ==
 )
     .toList();
 
+final skippedPatients = queue
+    .where(
+(patient) =>
+patient['status'] ==
+'Skipped',
+)
+    .toList();
+
 String currentToken = '--';
 
 if (servingPatients.isNotEmpty) {
@@ -359,7 +360,8 @@ currentToken =
 // --------------------------------------------------
 
 return SingleChildScrollView(
-padding: const EdgeInsets.all(24),
+padding:
+const EdgeInsets.all(24),
 
 child: Center(
 child: ConstrainedBox(
@@ -446,15 +448,19 @@ shape:
 BoxShape.circle,
 ),
 
-child: const Icon(
+child:
+const Icon(
 Icons
     .medical_services,
-color: Colors.white,
+color:
+Colors.white,
 size: 38,
 ),
 ),
 
-const SizedBox(width: 20),
+const SizedBox(
+width: 20,
+),
 
 Expanded(
 child: Column(
@@ -472,7 +478,8 @@ color:
 Colors.white,
 fontSize: 24,
 fontWeight:
-FontWeight.bold,
+FontWeight
+    .bold,
 ),
 ),
 
@@ -518,7 +525,8 @@ TextStyle(
 color:
 Colors.white,
 fontWeight:
-FontWeight.w600,
+FontWeight
+    .w600,
 ),
 ),
 ],
@@ -585,13 +593,10 @@ children: [
 _StatCard(
 icon: Icons
     .people_outline,
-
 title:
 'Patients Today',
-
 value:
 '${queue.length}',
-
 color:
 Colors.blue,
 ),
@@ -599,12 +604,10 @@ Colors.blue,
 _StatCard(
 icon: Icons
     .hourglass_empty_outlined,
-
-title: 'Waiting',
-
+title:
+'Waiting',
 value:
 '${waitingPatients.length}',
-
 color:
 Colors.orange,
 ),
@@ -612,12 +615,10 @@ Colors.orange,
 _StatCard(
 icon: Icons
     .check_circle_outline,
-
-title: 'Completed',
-
+title:
+'Completed',
 value:
 '${completedPatients.length}',
-
 color:
 Colors.green,
 ),
@@ -625,13 +626,10 @@ Colors.green,
 _StatCard(
 icon: Icons
     .confirmation_number_outlined,
-
 title:
 'Current Token',
-
 value:
 currentToken,
-
 color:
 Colors.purple,
 ),
@@ -682,9 +680,7 @@ color: Colors.black
     .withOpacity(
 0.05,
 ),
-
 blurRadius: 15,
-
 offset:
 const Offset(
 0,
@@ -704,7 +700,6 @@ EdgeInsets.all(
 child: Center(
 child: Text(
 'No patients in the queue.',
-
 style:
 TextStyle(
 color:
@@ -720,24 +715,29 @@ children: [
 (patient) {
 final int token =
 patient[
-'tokenNumber'] as int;
+'tokenNumber']
+as int;
 
-final String status =
+final String
+status =
 patient[
-'status'] as String;
+'status']
+as String;
 
-final String patientId =
+final String
+patientId =
 patient[
-'patientId'] as String;
+'patientId']
+as String;
 
-// First try the name saved
-// inside queue_tokens.
-String patientName =
+String
+patientName =
 patient[
 'patientName'] ??
 'Patient';
 
-Color statusColor =
+Color
+statusColor =
 Colors.orange;
 
 if (status ==
@@ -752,12 +752,14 @@ statusColor =
 Colors.green;
 }
 
+if (status ==
+'Skipped') {
+statusColor =
+Colors.red;
+}
+
 return Column(
 children: [
-// --------------------------------------------------
-// PATIENT NAME
-// --------------------------------------------------
-
 FutureBuilder<
 DocumentSnapshot>(
 future:
@@ -766,13 +768,16 @@ patientName ==
 ? FirebaseFirestore
     .instance
     .collection(
-'patients')
+'patients',
+)
     .doc(
-patientId)
+patientId,
+)
     .get()
     : null,
 
-builder: (
+builder:
+(
 context,
 patientSnapshot,
 ) {
@@ -780,9 +785,6 @@ String
 finalPatientName =
 patientName;
 
-// Fallback to
-// patients collection
-// for old queue tokens.
 if (finalPatientName ==
 'Patient' &&
 patientSnapshot
@@ -814,16 +816,12 @@ patientData[
 return _PatientQueueRow(
 token:
 '#$token',
-
 name:
 finalPatientName,
-
 time:
 'Queue Token',
-
 status:
 status,
-
 statusColor:
 statusColor,
 );
@@ -910,38 +908,28 @@ onTap:
 waitingPatients
     .isEmpty
 ? null
+    : servingPatients
+    .isNotEmpty
+? null
     : () async {
 try {
-// Complete current patient
-if (servingPatients
-    .isNotEmpty) {
-final current =
-servingPatients
-    .first;
-
-await FirebaseFirestore
-    .instance
-    .collection(
-'queue_tokens',
-)
-    .doc(
-current[
-'id'],
-)
-    .update({
-'status':
-'Completed',
-});
-}
-
-// Get next patient
 final nextPatient =
 waitingPatients
     .first;
 
 final patientId =
 nextPatient[
-'patientId'];
+'patientId']
+as String;
+
+final patientName =
+nextPatient[
+'patientName']
+as String;
+
+final tokenNumber =
+nextPatient[
+'tokenNumber'];
 
 // Waiting -> Serving
 await FirebaseFirestore
@@ -956,6 +944,9 @@ nextPatient[
     .update({
 'status':
 'Serving',
+'calledAt':
+FieldValue
+    .serverTimestamp(),
 });
 
 // Notification
@@ -965,21 +956,26 @@ await FirebaseFirestore
 'notifications',
 )
     .add({
+'recipientType':
+'patient',
 'patientId':
 patientId,
-
+'patientName':
+patientName,
+'doctor':
+doctorName,
+'department':
+department,
+'tokenNumber':
+tokenNumber,
 'title':
 'Your Turn',
-
 'message':
 '$doctorName is ready to see you. Please proceed to the consultation room.',
-
 'type':
 'queue',
-
 'isRead':
 false,
-
 'createdAt':
 FieldValue
     .serverTimestamp(),
@@ -994,7 +990,7 @@ context,
 SnackBar(
 content:
 Text(
-'Token #${nextPatient['tokenNumber']} is now serving. Notification sent to the patient.',
+'Token #$tokenNumber is now serving.',
 ),
 ),
 );
@@ -1030,7 +1026,7 @@ title:
 'Complete Patient',
 
 subtitle:
-'Mark current patient completed',
+'Patient has been seen',
 
 color:
 Colors.green,
@@ -1047,7 +1043,17 @@ servingPatients
 
 final patientId =
 currentPatient[
-'patientId'];
+'patientId']
+as String;
+
+final patientName =
+currentPatient[
+'patientName']
+as String;
+
+final tokenNumber =
+currentPatient[
+'tokenNumber'];
 
 // Serving -> Completed
 await FirebaseFirestore
@@ -1062,26 +1068,253 @@ currentPatient[
     .update({
 'status':
 'Completed',
+'completedAt':
+FieldValue
+    .serverTimestamp(),
 });
 
-// Notification
+// Patient Notification
 await FirebaseFirestore
     .instance
     .collection(
 'notifications',
 )
     .add({
+'recipientType':
+'patient',
+'patientId':
+patientId,
+'patientName':
+patientName,
+'doctor':
+doctorName,
+'department':
+department,
+'tokenNumber':
+tokenNumber,
+'title':
+'Visit Completed',
+'message':
+'Your consultation with $doctorName has been completed.',
+'type':
+'queue',
+'isRead':
+false,
+'createdAt':
+FieldValue
+    .serverTimestamp(),
+});
+
+// Admin Notification
+await FirebaseFirestore
+    .instance
+    .collection(
+'notifications',
+)
+    .add({
+'recipientType':
+'admin',
+'patientId':
+patientId,
+'patientName':
+patientName,
+'doctor':
+doctorName,
+'department':
+department,
+'tokenNumber':
+tokenNumber,
+'title':
+'Consultation Completed',
+'message':
+'$patientName completed consultation with $doctorName for token #$tokenNumber.',
+'type':
+'admin',
+'adminEmail':
+'',
+'isRead':
+false,
+'createdAt':
+FieldValue
+    .serverTimestamp(),
+});
+
+if (context
+    .mounted) {
+ScaffoldMessenger
+    .of(
+context,
+).showSnackBar(
+SnackBar(
+content:
+Text(
+'Token #$tokenNumber completed.',
+),
+),
+);
+}
+} catch (e) {
+if (context
+    .mounted) {
+ScaffoldMessenger
+    .of(
+context,
+).showSnackBar(
+SnackBar(
+content:
+Text(
+'Error: $e',
+),
+),
+);
+}
+}
+},
+),
+
+// --------------------------------------------------
+// PATIENT NOT PRESENT
+// --------------------------------------------------
+
+_DoctorActionCard(
+icon:
+Icons.person_off,
+
+title:
+'Patient Not Present',
+
+subtitle:
+'Skip current patient',
+
+color:
+Colors.red,
+
+onTap:
+servingPatients
+    .isEmpty
+? null
+    : () async {
+try {
+final currentPatient =
+servingPatients
+    .first;
+
+final patientId =
+currentPatient[
+'patientId']
+as String;
+
+final patientName =
+currentPatient[
+'patientName']
+as String;
+
+final tokenNumber =
+currentPatient[
+'tokenNumber'];
+
+// Serving -> Skipped
+await FirebaseFirestore
+    .instance
+    .collection(
+'queue_tokens',
+)
+    .doc(
+currentPatient[
+'id'],
+)
+    .update({
+'status':
+'Skipped',
+'skippedAt':
+FieldValue
+    .serverTimestamp(),
+});
+
+// ==================================================
+// 1. PATIENT NOTIFICATION
+// ==================================================
+
+await FirebaseFirestore
+    .instance
+    .collection(
+'notifications',
+)
+    .add({
+'recipientType':
+'patient',
+
 'patientId':
 patientId,
 
+'patientName':
+patientName,
+
+'doctor':
+doctorName,
+
+'department':
+department,
+
+'tokenNumber':
+tokenNumber,
+
 'title':
-'Visit Completed',
+'Token Skipped',
 
 'message':
-'Your consultation with $doctorName has been completed.',
+'You were not present when token #$tokenNumber was called by $doctorName. Please contact the reception desk if you still need consultation.',
 
 'type':
-'queue',
+'patient',
+
+'isRead':
+false,
+
+'createdAt':
+FieldValue
+    .serverTimestamp(),
+});
+
+// ==================================================
+// 2. ADMIN NOTIFICATION
+// ==================================================
+
+await FirebaseFirestore
+    .instance
+    .collection(
+'notifications',
+)
+    .add({
+'recipientType':
+'admin',
+
+'patientId':
+patientId,
+
+'patientName':
+patientName,
+
+'doctor':
+doctorName,
+
+'department':
+department,
+
+'tokenNumber':
+tokenNumber,
+
+'title':
+'Patient Not Present',
+
+'message':
+'$patientName was not present when token #$tokenNumber was called by $doctorName.',
+
+'type':
+'admin',
+
+'adminEmail':
+'',
 
 'isRead':
 false,
@@ -1100,7 +1333,7 @@ context,
 SnackBar(
 content:
 Text(
-'Token #${currentPatient['tokenNumber']} completed. Notification sent to patient.',
+'Token #$tokenNumber marked as skipped.',
 ),
 ),
 );
@@ -1128,7 +1361,60 @@ Text(
 },
 ),
 
-const SizedBox(height: 30),
+const SizedBox(height: 20),
+
+// --------------------------------------------------
+// SKIPPED PATIENTS INFORMATION
+// --------------------------------------------------
+
+if (skippedPatients.isNotEmpty)
+Container(
+padding:
+const EdgeInsets.all(
+16,
+),
+
+decoration:
+BoxDecoration(
+color:
+Colors.red.shade50,
+
+borderRadius:
+BorderRadius.circular(
+14,
+),
+),
+
+child: Row(
+children: [
+Icon(
+Icons.info_outline,
+color:
+Colors.red.shade700,
+),
+
+const SizedBox(
+width: 10,
+),
+
+Expanded(
+child: Text(
+'${skippedPatients.length} patient(s) were marked as not present.',
+style:
+TextStyle(
+color: Colors
+    .red
+    .shade700,
+fontWeight:
+FontWeight.w500,
+),
+),
+),
+],
+),
+),
+
+const SizedBox(height: 20),
 
 // --------------------------------------------------
 // FIREBASE STATUS
@@ -1163,9 +1449,10 @@ SizedBox(width: 10),
 Expanded(
 child: Text(
 'Queue updates automatically from Firebase.',
-
-style: TextStyle(
-color: Colors.blue,
+style:
+TextStyle(
+color:
+Colors.blue,
 fontWeight:
 FontWeight.w500,
 ),
@@ -1239,9 +1526,7 @@ boxShadow: [
 BoxShadow(
 color:
 Colors.black.withOpacity(0.05),
-
 blurRadius: 12,
-
 offset:
 const Offset(0, 4),
 ),
@@ -1296,7 +1581,8 @@ const SizedBox(height: 4),
 Text(
 title,
 
-style: const TextStyle(
+style:
+const TextStyle(
 fontSize: 12,
 color: Colors.grey,
 ),
@@ -1525,12 +1811,10 @@ const SizedBox(width: 12),
 Expanded(
 child: Column(
 mainAxisAlignment:
-MainAxisAlignment
-    .center,
+MainAxisAlignment.center,
 
 crossAxisAlignment:
-CrossAxisAlignment
-    .start,
+CrossAxisAlignment.start,
 
 children: [
 Text(
@@ -1554,8 +1838,7 @@ subtitle,
 style:
 const TextStyle(
 fontSize: 12,
-color:
-Colors.grey,
+color: Colors.grey,
 ),
 ),
 ],

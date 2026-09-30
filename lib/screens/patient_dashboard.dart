@@ -5,7 +5,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'queue_token_screen.dart';
 import 'view_queue_screen.dart';
-import 'book_appointment_screen.dart';
 import 'my_history_screen.dart';
 import 'notifications_screen.dart';
 
@@ -88,7 +87,6 @@ stream: FirebaseFirestore.instance
 isEqualTo: user.uid,
 )
     .snapshots(),
-
 builder: (context, patientSnapshot) {
 if (patientSnapshot.connectionState ==
 ConnectionState.waiting) {
@@ -183,7 +181,6 @@ stream: FirebaseFirestore.instance
 isEqualTo: department,
 )
     .snapshots(),
-
 builder:
 (context, queueSnapshot) {
 if (queueSnapshot.connectionState ==
@@ -217,7 +214,8 @@ data['tokenNumber'],
 );
 
 final String tokenStatus =
-data['status'] ?? 'Waiting';
+data['status'] ??
+'Waiting';
 
 // Current serving patient
 if (tokenStatus == 'Serving') {
@@ -283,7 +281,8 @@ if (status == 'Serving') {
 statusText = 'It is your turn!';
 } else {
 statusText =
-'$patientsAhead patient${patientsAhead == 1 ? '' : 's'} '
+'$patientsAhead patient'
+'${patientsAhead == 1 ? '' : 's'} '
 'ahead of you';
 }
 
@@ -299,7 +298,6 @@ waitText = '$estimatedMinutes min';
 
 return Container(
 padding: const EdgeInsets.all(25),
-
 decoration: BoxDecoration(
 gradient: const LinearGradient(
 colors: [
@@ -310,11 +308,9 @@ Color(0xFF42A5F5),
 borderRadius:
 BorderRadius.circular(20),
 ),
-
 child: Column(
 crossAxisAlignment:
 CrossAxisAlignment.start,
-
 children: [
 const Text(
 'Your Queue Status',
@@ -329,19 +325,15 @@ const SizedBox(height: 10),
 Row(
 mainAxisAlignment:
 MainAxisAlignment.spaceBetween,
-
 children: [
 Expanded(
 child: Column(
 crossAxisAlignment:
 CrossAxisAlignment.start,
-
 children: [
 Text(
 'Token #$tokenNumber',
-
-style:
-const TextStyle(
+style: const TextStyle(
 color: Colors.white,
 fontSize: 32,
 fontWeight:
@@ -353,13 +345,11 @@ const SizedBox(height: 5),
 
 Text(
 statusText,
-
 style: TextStyle(
 color: status ==
 'Serving'
 ? Colors.white
     : Colors.white70,
-
 fontWeight:
 status == 'Serving'
 ? FontWeight.bold
@@ -371,7 +361,6 @@ const SizedBox(height: 5),
 
 Text(
 '$department • $doctor',
-
 style:
 const TextStyle(
 color: Colors.white70,
@@ -390,16 +379,12 @@ const EdgeInsets.symmetric(
 horizontal: 16,
 vertical: 12,
 ),
-
-decoration:
-BoxDecoration(
+decoration: BoxDecoration(
 color: Colors.white
     .withOpacity(0.15),
-
 borderRadius:
 BorderRadius.circular(12),
 ),
-
 child: Column(
 children: [
 const Icon(
@@ -412,7 +397,6 @@ const SizedBox(height: 5),
 
 Text(
 waitText,
-
 style:
 const TextStyle(
 color: Colors.white,
@@ -425,7 +409,6 @@ Text(
 status == 'Serving'
 ? 'Your Turn'
     : 'Estimated wait',
-
 style:
 const TextStyle(
 color: Colors.white70,
@@ -443,8 +426,8 @@ const SizedBox(height: 15),
 // Current serving token
 if (currentServingToken > 0)
 Text(
-'Currently serving: Token #$currentServingToken',
-
+'Currently serving: '
+'Token #$currentServingToken',
 style:
 const TextStyle(
 color: Colors.white70,
@@ -463,10 +446,8 @@ fontSize: 12,
 Widget _loadingQueueCard() {
 return Container(
 height: 170,
-
 padding:
 const EdgeInsets.all(25),
-
 decoration: BoxDecoration(
 gradient: const LinearGradient(
 colors: [
@@ -474,14 +455,11 @@ Color(0xFF1976D2),
 Color(0xFF42A5F5),
 ],
 ),
-
 borderRadius:
 BorderRadius.circular(20),
 ),
-
 child: const Center(
-child:
-CircularProgressIndicator(
+child: CircularProgressIndicator(
 color: Colors.white,
 ),
 ),
@@ -496,7 +474,6 @@ Widget _noActiveQueueCard() {
 return Container(
 padding:
 const EdgeInsets.all(25),
-
 decoration: BoxDecoration(
 gradient: const LinearGradient(
 colors: [
@@ -504,11 +481,9 @@ Color(0xFF1976D2),
 Color(0xFF42A5F5),
 ],
 ),
-
 borderRadius:
 BorderRadius.circular(20),
 ),
-
 child: const Row(
 children: [
 Icon(
@@ -523,15 +498,11 @@ Expanded(
 child: Column(
 crossAxisAlignment:
 CrossAxisAlignment.start,
-
 children: [
 Text(
 'Your Queue Status',
-
-style:
-TextStyle(
-color:
-Colors.white70,
+style: TextStyle(
+color: Colors.white70,
 fontSize: 15,
 ),
 ),
@@ -540,9 +511,7 @@ SizedBox(height: 6),
 
 Text(
 'No active queue token',
-
-style:
-TextStyle(
+style: TextStyle(
 color: Colors.white,
 fontSize: 21,
 fontWeight:
@@ -553,12 +522,10 @@ FontWeight.bold,
 SizedBox(height: 4),
 
 Text(
-'Get a queue token to join a department queue.',
-
-style:
-TextStyle(
-color:
-Colors.white70,
+'Get a queue token to join a '
+'department queue.',
+style: TextStyle(
+color: Colors.white70,
 fontSize: 12,
 ),
 ),
@@ -579,7 +546,6 @@ String message) {
 return Container(
 padding:
 const EdgeInsets.all(25),
-
 decoration: BoxDecoration(
 gradient: const LinearGradient(
 colors: [
@@ -587,16 +553,12 @@ Color(0xFF1976D2),
 Color(0xFF42A5F5),
 ],
 ),
-
 borderRadius:
 BorderRadius.circular(20),
 ),
-
 child: Text(
 message,
-
-style:
-const TextStyle(
+style: const TextStyle(
 color: Colors.white,
 ),
 ),
@@ -621,252 +583,6 @@ return int.tryParse(value) ?? 0;
 }
 
 return 0;
-}
-
-// --------------------------------------------------
-// DYNAMIC APPOINTMENT CARD
-// --------------------------------------------------
-
-Widget buildAppointmentCard() {
-final user =
-FirebaseAuth.instance.currentUser;
-
-if (user == null) {
-return const SizedBox();
-}
-
-return StreamBuilder<QuerySnapshot>(
-stream: FirebaseFirestore.instance
-    .collection('appointments')
-    .where(
-'patientId',
-isEqualTo: user.uid,
-)
-    .snapshots(),
-
-builder: (context, snapshot) {
-if (snapshot.connectionState ==
-ConnectionState.waiting) {
-return Container(
-padding:
-const EdgeInsets.all(20),
-
-decoration:
-BoxDecoration(
-color: Colors.white,
-borderRadius:
-BorderRadius.circular(18),
-),
-
-child: const Center(
-child:
-CircularProgressIndicator(),
-),
-);
-}
-
-if (snapshot.hasError) {
-return Container(
-padding:
-const EdgeInsets.all(20),
-
-decoration:
-BoxDecoration(
-color: Colors.white,
-borderRadius:
-BorderRadius.circular(18),
-),
-
-child: const Text(
-'Unable to load appointment.',
-style: TextStyle(
-color: Colors.red,
-),
-),
-);
-}
-
-final documents =
-snapshot.data?.docs ?? [];
-
-// No appointment found
-if (documents.isEmpty) {
-return Container(
-padding:
-const EdgeInsets.all(20),
-
-decoration:
-BoxDecoration(
-color: Colors.white,
-borderRadius:
-BorderRadius.circular(18),
-),
-
-child: const Text(
-'No appointment booked.',
-style: TextStyle(
-color: Colors.grey,
-),
-),
-);
-}
-
-// Get the latest appointment
-final appointment =
-documents.last.data()
-as Map<String, dynamic>;
-
-final String department =
-appointment['department'] ??
-'Department';
-
-final String doctor =
-appointment['doctor'] ??
-'Doctor';
-
-final String date =
-appointment['date'] ??
-'Date not available';
-
-final String time =
-appointment['time'] ??
-'Time not available';
-
-final String status =
-appointment['status'] ??
-'Unknown';
-
-return Container(
-padding:
-const EdgeInsets.all(20),
-
-decoration: BoxDecoration(
-color: Colors.white,
-
-borderRadius:
-BorderRadius.circular(18),
-
-boxShadow: [
-BoxShadow(
-color: Colors.black
-    .withOpacity(0.05),
-
-blurRadius: 15,
-
-offset:
-const Offset(0, 5),
-),
-],
-),
-
-child: Row(
-children: [
-Container(
-width: 55,
-height: 55,
-
-decoration:
-BoxDecoration(
-color:
-Colors.blue.shade50,
-
-borderRadius:
-BorderRadius.circular(
-14,
-),
-),
-
-child: const Icon(
-Icons
-    .medical_services_outlined,
-
-color: Colors.blue,
-
-size: 28,
-),
-),
-
-const SizedBox(width: 15),
-
-Expanded(
-child: Column(
-crossAxisAlignment:
-CrossAxisAlignment.start,
-
-children: [
-Text(
-department,
-
-style:
-const TextStyle(
-fontSize: 17,
-fontWeight:
-FontWeight.bold,
-),
-),
-
-const SizedBox(height: 5),
-
-Text(
-'$doctor • $time',
-
-style:
-const TextStyle(
-color: Colors.grey,
-),
-),
-
-const SizedBox(height: 5),
-
-Text(
-date,
-
-style:
-const TextStyle(
-color: Colors.grey,
-fontSize: 13,
-),
-),
-],
-),
-),
-
-Container(
-padding:
-const EdgeInsets
-    .symmetric(
-horizontal: 12,
-vertical: 7,
-),
-
-decoration:
-BoxDecoration(
-color:
-Colors.green.shade50,
-
-borderRadius:
-BorderRadius.circular(
-20,
-),
-),
-
-child: Text(
-status,
-
-style:
-const TextStyle(
-color: Colors.green,
-fontWeight:
-FontWeight.w600,
-fontSize: 12,
-),
-),
-),
-],
-),
-);
-},
-);
 }
 
 // --------------------------------------------------
@@ -897,18 +613,13 @@ children: [
 Container(
 padding:
 const EdgeInsets.all(8),
-
 decoration:
 BoxDecoration(
 color:
 Colors.blue.shade50,
-
 borderRadius:
-BorderRadius.circular(
-10,
+BorderRadius.circular(10),
 ),
-),
-
 child: const Icon(
 Icons.local_hospital,
 color: Colors.blue,
@@ -919,10 +630,8 @@ const SizedBox(width: 10),
 
 const Text(
 'CareQueue',
-
 style: TextStyle(
-color:
-Colors.black87,
+color: Colors.black87,
 fontWeight:
 FontWeight.bold,
 fontSize: 20,
@@ -943,27 +652,20 @@ const PatientNotificationsScreen(),
 ),
 );
 },
-
 icon: const Icon(
 Icons.notifications_none,
-color:
-Colors.black87,
+color: Colors.black87,
 ),
-
-tooltip:
-'Notifications',
+tooltip: 'Notifications',
 ),
 
 // Logout
 IconButton(
-onPressed:
-logoutUser,
-
+onPressed: logoutUser,
 icon: const Icon(
 Icons.logout,
 color: Colors.red,
 ),
-
 tooltip: 'Logout',
 ),
 
@@ -975,11 +677,9 @@ padding:
 const EdgeInsets.only(
 right: 16,
 ),
-
 child: CircleAvatar(
 backgroundColor:
 Colors.blue.shade100,
-
 child: const Icon(
 Icons.person,
 color: Colors.blue,
@@ -997,27 +697,23 @@ body:
 SingleChildScrollView(
 padding:
 const EdgeInsets.all(24),
-
 child: Center(
 child: ConstrainedBox(
 constraints:
 const BoxConstraints(
 maxWidth: 1100,
 ),
-
 child: Column(
 crossAxisAlignment:
-CrossAxisAlignment
-    .stretch,
-
+CrossAxisAlignment.stretch,
 children: [
 // --------------------------------------------------
 // GREETING
 // --------------------------------------------------
 
 Text(
-'Good Morning, $patientName 👋',
-
+'Good Morning, '
+'$patientName 👋',
 style:
 const TextStyle(
 fontSize: 28,
@@ -1034,7 +730,6 @@ height: 6,
 
 const Text(
 'Welcome back to CareQueue.',
-
 style:
 TextStyle(
 fontSize: 15,
@@ -1062,7 +757,6 @@ height: 30,
 
 const Text(
 'Quick Actions',
-
 style:
 TextStyle(
 fontSize: 21,
@@ -1085,21 +779,18 @@ LayoutBuilder(
 builder:
 (context,
 constraints) {
-int crossAxisCount =
-4;
+int crossAxisCount = 3;
 
 if (constraints
     .maxWidth <
 800) {
-crossAxisCount =
-2;
+crossAxisCount = 2;
 }
 
 if (constraints
     .maxWidth <
 500) {
-crossAxisCount =
-1;
+crossAxisCount = 1;
 }
 
 return GridView.count(
@@ -1142,32 +833,6 @@ MaterialPageRoute(
 builder:
 (context) =>
 const QueueTokenScreen(),
-),
-);
-},
-),
-
-// Book Appointment
-_QuickActionCard(
-icon: Icons
-    .calendar_month_outlined,
-
-title:
-'Book Appointment',
-
-subtitle:
-'Schedule a visit',
-
-color:
-Colors.green,
-
-onTap: () {
-Navigator.push(
-context,
-MaterialPageRoute(
-builder:
-(context) =>
-const BookAppointmentScreen(),
 ),
 );
 },
@@ -1228,34 +893,6 @@ const MyHistoryScreen(),
 );
 },
 ),
-
-const SizedBox(
-height: 30,
-),
-
-// --------------------------------------------------
-// TODAY'S APPOINTMENT
-// --------------------------------------------------
-
-const Text(
-"Today's Appointment",
-
-style:
-TextStyle(
-fontSize: 21,
-fontWeight:
-FontWeight.bold,
-color:
-Color(0xFF1E293B),
-),
-),
-
-const SizedBox(
-height: 15,
-),
-
-// Dynamic Firebase appointment
-buildAppointmentCard(),
 ],
 ),
 ),
@@ -1290,51 +927,38 @@ Widget build(
 BuildContext context) {
 return InkWell(
 onTap: onTap,
-
 borderRadius:
 BorderRadius.circular(16),
-
 child: Container(
 padding:
 const EdgeInsets.all(18),
-
 decoration:
 BoxDecoration(
 color: Colors.white,
-
 borderRadius:
 BorderRadius.circular(16),
-
 boxShadow: [
 BoxShadow(
 color: Colors.black
     .withOpacity(0.05),
-
 blurRadius: 12,
-
 offset:
 const Offset(0, 4),
 ),
 ],
 ),
-
 child: Row(
 children: [
 Container(
 width: 48,
 height: 48,
-
 decoration:
 BoxDecoration(
 color:
 color.withOpacity(0.1),
-
 borderRadius:
-BorderRadius.circular(
-12,
+BorderRadius.circular(12),
 ),
-),
-
 child: Icon(
 icon,
 color: color,
@@ -1351,15 +975,12 @@ child: Column(
 mainAxisAlignment:
 MainAxisAlignment
     .center,
-
 crossAxisAlignment:
 CrossAxisAlignment
     .start,
-
 children: [
 Text(
 title,
-
 style:
 const TextStyle(
 fontWeight:
@@ -1376,7 +997,6 @@ height: 4,
 
 Text(
 subtitle,
-
 style:
 const TextStyle(
 fontSize: 12,
